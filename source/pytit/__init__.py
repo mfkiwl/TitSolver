@@ -3,8 +3,4 @@
 # See /LICENSE.md for license information. SPDX-License-Identifier: MIT
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# TODO: Proper Python module building and installation.
-file(GLOB PYTHON_SOURCES "*.py")
-install(FILES ${PYTHON_SOURCES} DESTINATION "python/pytit")
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+print()  # TODO: Remove this line once we actual code.

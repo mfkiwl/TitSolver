@@ -11,6 +11,7 @@ add_tit_executable(
     "backend.cpp"
   DEPENDS
     tit::core
+    tit::python_interpreter
     Crow::Crow
 )
 
