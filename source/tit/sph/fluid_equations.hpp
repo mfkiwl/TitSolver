@@ -146,9 +146,7 @@ public:
 
       if (const auto fact = ldl(M); fact) {
         // Linear interpolation succeeds, use it.
-        rho[b] = {};
-        v[b] = {};
-        if constexpr (has<PV>(u)) u[b] = {};
+        clear(b, rho, v, u);
         const auto E = fact->solve(unit<0>(M[0]));
         for (const PV a : mesh.fixed_interp(b)) {
           const auto r_delta = r_ghost - r[a];
@@ -160,9 +158,7 @@ public:
         }
       } else if (!is_tiny(S)) {
         // Constant interpolation succeeds, use it.
-        rho[b] = {};
-        v[b] = {};
-        if constexpr (has<PV>(u)) u[b] = {};
+        clear(b, rho, v, u);
         const auto E = inverse(S);
         for (const PV a : mesh.fixed_interp(b)) {
           const auto r_delta = r_ghost - r[a];
@@ -202,11 +198,7 @@ public:
     // Clean-up continuity equation fields and apply source terms.
     par::for_each(particles.all(), [this](PV a) {
       // Clean-up continuity equation fields.
-      drho_dt[a] = {};
-      if constexpr (has<PV>(grad_rho)) grad_rho[a] = {};
-      if constexpr (has<PV>(C)) C[a] = {};
-      if constexpr (has<PV>(N)) N[a] = {};
-      if constexpr (has<PV>(L)) L[a] = {};
+      clear(a, drho_dt, grad_rho, C, N, L);
 
       // Apply continuity equation source terms.
       std::apply([a](const auto&... f) { ((drho_dt[a] += f(a)), ...); },
@@ -298,10 +290,7 @@ public:
     // sound speed and apply source terms.
     par::for_each(particles.all(), [this](PV a) {
       // Clean-up momentum and energy equation fields.
-      dv_dt[a] = {};
-      if constexpr (has<PV>(div_v)) div_v[a] = {};
-      if constexpr (has<PV>(curl_v)) curl_v[a] = {};
-      if constexpr (has<PV>(du_dt)) du_dt[a] = {};
+      clear(a, dv_dt, div_v, curl_v, du_dt);
 
       // Apply source terms.
       std::apply(

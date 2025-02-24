@@ -96,6 +96,14 @@ inline constexpr bool is_field_set_v<meta::Set<Fields...>> = true;
 template<class FieldSet>
 concept field_set = impl::is_field_set_v<FieldSet>;
 
+// Clear the field value.
+template<class PV, field... Fields>
+constexpr void clear([[maybe_unused]] PV& particle, Fields... fields) {
+  meta::Set{fields...}.for_each([&particle]<field Field>(Field field) {
+    if constexpr (impl::has_field_<PV, Field>) particle[field] = {};
+  });
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /// Declare a particle field.

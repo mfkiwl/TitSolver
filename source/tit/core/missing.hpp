@@ -153,10 +153,11 @@ template<std::ranges::input_range Range>
   requires (std::formattable<std::ranges::range_value_t<Range>, char> &&
             !std::constructible_from<std::string, Range &&>)
 struct std::formatter<Range> {
-  constexpr auto parse(auto& context) {
+  static constexpr auto parse(const std::format_parse_context& context) {
     return context.begin();
   }
-  constexpr auto format(const Range& range, auto& context) const {
+  static constexpr auto format(const Range& range,
+                               std::format_context& context) {
     auto out = context.out();
     if (std::ranges::empty(range)) return std::format_to(out, "[]");
     out = std::format_to(out, "[{}", *std::begin(range));

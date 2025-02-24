@@ -695,10 +695,11 @@ constexpr auto deserialize(Stream& in, Vec<Num, Dim>& vec) -> bool {
 // Vector formatter.
 template<class Num, tit::size_t Dim>
 struct std::formatter<tit::Vec<Num, Dim>> {
-  constexpr auto parse(auto& context) {
+  static constexpr auto parse(const std::format_parse_context& context) {
     return context.begin();
   }
-  constexpr auto format(const tit::Vec<Num, Dim>& a, auto& context) const {
+  static constexpr auto format(const tit::Vec<Num, Dim>& a,
+                               std::format_context& context) {
     auto out = std::format_to(context.out(), "{}", a[0]);
     for (tit::size_t i = 1; i < Dim; ++i) {
       out = std::format_to(out, " {}", a[i]);

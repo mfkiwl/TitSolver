@@ -130,11 +130,10 @@ public:
   /// @param pairs Range of the pairs of bucket indices and values.
   template<std::ranges::input_range Pairs>
   constexpr void assign_pairs_seq(size_t count, Pairs&& pairs) {
-    TIT_ASSUME_UNIVERSAL(Pairs, pairs);
     assign_pairs_tall_impl_(
         count,
-        /// @todo Why is `std::bind_front` not compiling here? Same below.
-        [&pairs](auto func) { std::ranges::for_each(pairs, std::move(func)); },
+        std::bind_front(std::ranges::for_each,
+                        std::views::all(std::forward<Pairs>(pairs))),
         [](auto& cnt) { return cnt++; });
   }
 
@@ -147,10 +146,10 @@ public:
   /// @param pairs Range of the pairs of bucket indices and values.
   template<par::range Pairs>
   constexpr void assign_pairs_par_tall(size_t count, Pairs&& pairs) {
-    TIT_ASSUME_UNIVERSAL(Pairs, pairs);
     assign_pairs_tall_impl_(
         count,
-        [&pairs](auto func) { par::for_each(pairs, std::move(func)); },
+        std::bind_front(par::for_each,
+                        std::views::all(std::forward<Pairs>(pairs))),
         [](auto& cnt) { return par::fetch_and_add(cnt, 1); });
   }
 

@@ -43,12 +43,12 @@ auto error_message(int status, sqlite3* db = nullptr) -> std::string {
 
 Database::Database(const std::filesystem::path& path) {
   sqlite3* db = nullptr;
-  const auto status = sqlite3_open_v2( //
-      path.c_str(),
-      &db,
-      SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
-      nullptr);
-  if (status != SQLITE_OK) {
+  if (const auto status = sqlite3_open_v2( //
+          path.c_str(),
+          &db,
+          SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
+          nullptr);
+      status != SQLITE_OK) {
     TIT_THROW("SQLite database open failed ({}): {}",
               status,
               error_message(status, db));
@@ -57,8 +57,7 @@ Database::Database(const std::filesystem::path& path) {
 }
 
 void Database::Closer_::operator()(sqlite3* db) {
-  const auto status = sqlite3_close_v2(db);
-  if (status != SQLITE_OK) {
+  if (const auto status = sqlite3_close_v2(db); status != SQLITE_OK) {
     // Let's not throw in destructors.
     TIT_ERROR("SQLite database close failed ({}): {}",
               status,

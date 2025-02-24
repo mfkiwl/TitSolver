@@ -282,10 +282,11 @@ constexpr auto deserialize(Stream& in, Mat<Num, Dim>& mat) -> bool {
 // Matrix formatter.
 template<class Num, tit::size_t Dim>
 struct std::formatter<tit::Mat<Num, Dim>> {
-  constexpr auto parse(auto& context) {
+  static constexpr auto parse(const std::format_parse_context& context) {
     return context.begin();
   }
-  constexpr auto format(const tit::Mat<Num, Dim>& A, auto& context) const {
+  static constexpr auto format(const tit::Mat<Num, Dim>& A,
+                               std::format_context& context) {
     auto out = std::format_to(context.out(), "{}", A[0]);
     for (tit::size_t i = 1; i < Dim; ++i) {
       out = std::format_to(out, " {}", A[i]);
