@@ -72,7 +72,7 @@ auto run_backend(CmdArgs args) -> int {
         const py::Dict response;
         try {
           const auto request = py::expect<py::Dict>(json.attr("loads")(data));
-          response["requestID"] = request.at("requestID"); /// @todo Fix it!
+          response["requestID"] = request["requestID"];
           const auto expr = py::extract<std::string>(request["expression"]);
           response["result"] = interpreter.eval(expr);
           response["status"] = "success";

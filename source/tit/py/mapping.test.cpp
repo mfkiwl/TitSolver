@@ -112,6 +112,11 @@ TEST_CASE("py::Dict") {
         else CHECK_MESSAGE(false, "Unexpected key");
       });
     }
+    SUBCASE("reference assignment") {
+      dict["c"] = dict["b"];
+      CHECK(dict.has_key("c"));
+      CHECK(dict["c"] == py::Int{2});
+    }
   }
   SUBCASE("operators") {
     SUBCASE("operator[]") {

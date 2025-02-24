@@ -100,7 +100,7 @@ public:
 
   /// Reference wrapper to the sequence item or slice.
   template<class Self, class Index>
-  class ItemAt {
+  class ItemAt final {
   public:
 
     /// Item type.
@@ -110,6 +110,13 @@ public:
     constexpr ItemAt(const Self& self, Index index)
         : self_{&self}, index_{std::move(index)} {}
 
+    // Copy and move constructors.
+    constexpr ItemAt(ItemAt&&) noexcept = default;
+    constexpr ItemAt(const ItemAt&) noexcept = default;
+
+    // Destructor.
+    constexpr ~ItemAt() noexcept = default;
+
     /// Get the item or slice.
     template<std::constructible_from<Item> Value>
     constexpr explicit(false) operator Value() const {
@@ -118,12 +125,22 @@ public:
     }
 
     /// Assign the item or slice.
+    /// @{
     template<class Value>
     auto operator=(Value&& value) -> ItemAt& {
       TIT_ASSERT(self_ != nullptr, "Self is invalid!");
       self_->set_at(index_, std::forward<Value>(value));
       return *this;
     }
+    auto operator=(ItemAt&& other) noexcept(false) -> ItemAt& {
+      if (this != &other) self_->set_at(index_, static_cast<Item>(other));
+      return *this;
+    }
+    auto operator=(const ItemAt& other) -> ItemAt& {
+      if (this != &other) self_->set_at(index_, static_cast<Item>(other));
+      return *this;
+    }
+    /// @}
 
   private:
 
